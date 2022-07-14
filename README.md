@@ -9,8 +9,8 @@ Copy ppmore into c:
 Open shell, set your default text viewer.
 using one of following commands.
 
-setenv ppmore appdir:mutiviewer
-setenv ppmore appdir:mutiview
-setenv ppmore appdir:notepad
-setenv ppmore appdir:evenmore
+* setenv ppmore appdir:mutiviewer
+* setenv ppmore appdir:mutiview
+* setenv ppmore appdir:notepad
+* setenv ppmore appdir:evenmore
 
