@@ -1,0 +1,54 @@
+;BEGIN MUI
+If EXISTS SYS:MUI
+  C:Assign >NIL:     MUI:    SYS:MUI
+  C:Assign >NIL: ADD LIBS:   MUI:Libs
+  C:Assign >NIL: ADD LOCALE: MUI:Locale
+  C:Assign >NIL: ADD HELP:   MUI:Docs
+EndIf
+;END MUI
+
+assign tbimages: SYS:Prefs/Presets/tbimages
+;BEGIN MultiEdit
+Assign MultiEdit: "SYS:Utilities/MultiEdit"
+;END MultiEdit
+;BEGIN MultiViewer
+Assign MultiViewer: "SYS:Utilities/MultiViewer"
+;END MultiViewer
+
+assign sdk: work:sdk
+execute sdk:s/sdk-startup
+
+assign amos_disks:         "Work:UAE-HD/Work/Amos disks"
+
+assign AmosPro_System:     "Work:UAE-HD/Work/Progs/AMOSPro_System"
+assign amospro:         amospro_system:
+
+assign gfx: work:gfx
+
+assign uwb:          work:uae-hd/workbench
+assign uwork:           work:uae-hd/work
+
+execute uwb:S/amos-Startup
+
+assign ispell:          Work:ispell
+
+;BEGIN Cygnix
+;assign Cygnix: "Kingstone (backup):AmiCygnix"
+;execute Cygnix:s/Cygnix-Startup
+;END Cygnix
+
+assign NDK31: uwork:NDK_3.1/
+assign SDK31: uwork:amiga-sdk-master/sdkinclude/
+
+assign whdload-uae:   Work:Emulator/UAE_AGA_HD
+assign uae_cpu:   Work:pro_j/BasiliskII-1.0/src/uae_cpu
+
+newshell aux:
+
+;BEGIN SViewNG
+Path Work:Progs/SViewNG ADD
+;END SViewNG
+;BEGIN SuperView-Library
+Assign VMEM: T:
+SVPrefs >NIL: <NIL: INIT
+;END SuperView-Library
