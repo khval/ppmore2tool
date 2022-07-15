@@ -1,3 +1,10 @@
+/*
+ *
+ * Copyright 2022, KJetil Hvalstrand
+ * MIT License
+ *
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -5,6 +12,7 @@
 #include <proto/exec.h>
 #include <proto/dos.h>
 #include <proto/icon.h>
+#include <proto/powerpacker.h>
 #include <workbench/startup.h>
 
 #define sfree(fn,ptr) if (ptr) fn(ptr); ptr = NULL
@@ -28,21 +36,12 @@ bool wbStartup_info(struct WBStartup *wbmsg,struct project *project)
 {
 	int n;
 
-	printf("%d\n",wbmsg -> sm_NumArgs);
-
-	for (n=0;n<wbmsg -> sm_NumArgs;n++)
-	{
-		 DebugPrintF( "%d: %s\n",n, wbmsg -> sm_ArgList[n].wa_Name);
-	}
-
  	if ( wbmsg -> sm_NumArgs == 2 )
 	{
 		project -> filename = wbmsg -> sm_ArgList[1].wa_Name;
 		project -> dir_lock = wbmsg -> sm_ArgList[1].wa_Lock;
 		project -> old_lock = SetCurrentDir( wbmsg -> sm_ArgList[1].wa_Lock );
 	}
-
-	printf("%s\n",project -> filename);
 
 	return project -> filename ? true : false;
 }
@@ -109,6 +108,52 @@ void set_tool_env()
 	if (GetVar("ppmore2tool" , tmp, sizeof(tmp), LV_VAR ) != -1) set_tool( tmp );
 }
 
+APTR pp_alloc_fn(ULONG size)
+{
+	return malloc(size);
+}
+
+void pp_free_fn(APTR ptr)
+{
+	free(ptr);
+}
+
+
+char *unpack(const char *file)
+{
+	char *tmpfile = NULL;
+	UBYTE *filestart;
+	ULONG filelen;
+	LONG err;
+
+	err = ppLoadData2 (file, &filestart, &filelen, pp_alloc_fn, pp_free_fn, NULL);
+
+	if (err)
+		printf ("error: %s!\n", ppErrorMessage (err));
+	else
+	{
+		char *tmp = alloca(1000); // large tmp buffer on stack, will not run out of space.
+		sprintf(tmp,"t:ppmore%08x",unpack);
+		tmpfile = strdup(tmp); // only reserve copy chars we need.
+
+		if (tmpfile)
+		{
+			BPTR fd;
+			
+			if ((fd = FOpen(tmpfile,MODE_NEWFILE,0)))
+			{
+				FWrite(fd,filestart,1,filelen);
+				Close(fd);
+			}
+		}
+	}
+
+	/* free all resources */
+
+	if (filestart) pp_free_fn (filestart);
+	return tmpfile;
+}
+
 int _main(int args,char **arg)
 {
 	int i;
@@ -144,7 +189,24 @@ int _main(int args,char **arg)
 		FreeDiskObject(dobj);
 	}
 
-	run_tool(&project);
+	{
+		char *tmpname  = unpack( project.filename );
+
+		if (tmpname)
+		{
+			struct project project;
+			memset(&project,0,sizeof(project));
+			project.filename = tmpname;
+			run_tool(&project);
+			Delete(tmpname);
+			free(tmpname);
+		}
+		else
+		{
+			run_tool(&project);
+		}
+	}
+
 
 	sfree(free,tool);
 	free_project(&project);
