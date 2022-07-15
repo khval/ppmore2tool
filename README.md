@@ -9,7 +9,7 @@ this program uses powerpacker.library version 38 or higher for AmigaOS4.1.
 Copy ppmore into c:
 
 Open shell, set your default text viewer.
-using one of following commands.
+using one of the following commands.
 
 * setenv ppmore2tool appdir:mutiviewer
 * setenv ppmore2tool appdir:mutiview
