@@ -1,7 +1,7 @@
 # ppmore2tool
 Unpack powerpacked text files, and open it in your favorite text viewer.
 
-ppmore2tool is wrapper for ppmore command, and it’s not the original ppmore from 90’s.
+The original ppmore for classic Amiga is crashing on AmigaOS4.1, instead of wasting lots of hours trying to debug, that old tool, I have decided to make wrapper. Ppmore2tool is not based on original ppmore command.
 this program uses powerpacker.library version 38 or higher for AmigaOS4.1.
 
 Copy ppmore into c:
